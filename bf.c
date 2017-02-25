@@ -62,7 +62,7 @@ void interpret(char *bf, long length){
 			case ',': memory[ptr] = getchar(); 	break;
 			case '.': putchar(memory[ptr]); 	break;
 			case '[': if(!memory[ptr]) ip = loop(bf, length, '[', ']', ip) - 1;	break;
-			case ']': if(memory[ptr]) ip  = loop(bf, length, ']', '[', ip) - 1;	break;
+			case ']': if(memory[ptr])  ip = loop(bf, length, ']', '[', ip) - 1;	break;
 			case '{': ip = loop(bf, length, '{', '}', ip) - 1;			break;
 			case '}': ip = loop(bf, length, '}', '{', ip) - 1;			break;
 			default: continue;
