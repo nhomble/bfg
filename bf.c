@@ -30,7 +30,7 @@ int load_file(char *buffer, long length, char *path){
 }
 
 void usage(char* prog){
-	printf("usage: %s [path to brainfuck file]\n", prog);
+	printf("usage: %s [path to *.bf]\n", prog);
 }
 
 void interpret(char *bf, long length){
@@ -43,42 +43,30 @@ void interpret(char *bf, long length){
 	for(ip = 0; ip < length; ip++){
 		input = bf[ip];
 		switch(input){
-			case '+': memory[ptr]++; break;
-			case '-': memory[ptr]--; break;
-			case '>': ptr++; break;
-			case '<': ptr--; break;
-			case ',': memory[ptr] = getchar(); break;
-			case '.': putchar(memory[ptr]); break;
-			case '[':
-				// can we execute the loop
-				if(memory[ptr])
-					break;	// yes we can
+			case '+': memory[ptr]++; 		break;
+			case '-': memory[ptr]--; 		break;
+			case '>': ptr++; 			break;
+			case '<': ptr--; 			break;
+			case ',': memory[ptr] = getchar(); 	break;
+			case '.': putchar(memory[ptr]); 	break;
+			case '[': if(memory[ptr])		break;
 				// nope
 				inner_loop = 0;
 				ip++;
 				for(; ip < length; ip++){
-					if(bf[ip] == ']' && !inner_loop)
-						break;
-					if(bf[ip] == '[')
-						inner_loop++;
-					if(bf[ip] == ']')
-						inner_loop--;
+					if(bf[ip] == ']' && !inner_loop) 	break;
+					if(bf[ip] == '[') 			inner_loop++;
+					if(bf[ip] == ']') 			inner_loop--;
 				}
 				ip--; // we are going to increment in just a bit
 				break;
-			case ']':
-				// should we loop
-				if(!memory[ptr])
-					break; // nope
+			case ']': if(!memory[ptr]) break;
 				inner_loop = 0;
 				ip--;
 				for(; ip >= 0; ip--){
-					if(bf[ip] == '[' && inner_loop == 0)
-						break;
-					if(bf[ip] == ']')
-						inner_loop++;
-					if(bf[ip] == '[')
-						inner_loop--;
+					if(bf[ip] == '[' && !inner_loop)	break;
+					if(bf[ip] == ']')			inner_loop++;
+					if(bf[ip] == '[')			inner_loop--;
 				}
 				ip--; // we are going to increment in just a bit
 			default: continue;
