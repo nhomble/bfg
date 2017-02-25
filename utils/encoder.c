@@ -10,6 +10,7 @@ void encode_char(char c){
 	int i;
 	for(i = 0; i < (int) c; i++)
 		printf("+");
+	printf(".");
 }
 
 void encode_string(char *message){
@@ -20,10 +21,9 @@ void encode_string(char *message){
 	for(i = 0; i < length; i++){
 		c = message[i];
 		encode_char(c);
-		printf(".>");
+		printf(">");
 	}
 	encode_char('\n');
-	encode_char('\r');
 }
 
 int main(int argc, char**argv){
