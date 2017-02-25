@@ -33,9 +33,21 @@ void usage(char* prog){
 	printf("usage: %s [path to *.bf]\n", prog);
 }
 
+int loop(char *bf, long length, char inc, char dec, int index){
+	int ip, inner_loop;
+
+	inner_loop = 0;
+	for(ip = index + 1; ip < length; ip++){
+		if(bf[ip] == dec && !inner_loop) 	break;
+		if(bf[ip] == inc) 			inner_loop++;
+		if(bf[ip] == dec) 			inner_loop--;
+	}
+	return ip;
+}
+
 void interpret(char *bf, long length){
 	unsigned char memory[MEM_LENGTH] = {0};
-	int ip, inner_loop;
+	int ip;
 	unsigned int ptr;
 	char input;
 
@@ -49,26 +61,10 @@ void interpret(char *bf, long length){
 			case '<': ptr--; 			break;
 			case ',': memory[ptr] = getchar(); 	break;
 			case '.': putchar(memory[ptr]); 	break;
-			case '[': if(memory[ptr])		break;
-				// nope
-				inner_loop = 0;
-				ip++;
-				for(; ip < length; ip++){
-					if(bf[ip] == ']' && !inner_loop) 	break;
-					if(bf[ip] == '[') 			inner_loop++;
-					if(bf[ip] == ']') 			inner_loop--;
-				}
-				ip--; // we are going to increment in just a bit
-				break;
-			case ']': if(!memory[ptr]) break;
-				inner_loop = 0;
-				ip--;
-				for(; ip >= 0; ip--){
-					if(bf[ip] == '[' && !inner_loop)	break;
-					if(bf[ip] == ']')			inner_loop++;
-					if(bf[ip] == '[')			inner_loop--;
-				}
-				ip--; // we are going to increment in just a bit
+			case '[': if(!memory[ptr]) ip = loop(bf, length, '[', ']', ip) - 1;	break;
+			case ']': if(memory[ptr]) ip  = loop(bf, length, ']', '[', ip) - 1;	break;
+			case '{': ip = loop(bf, length, '{', '}', ip) - 1;			break;
+			case '}': ip = loop(bf, length, '}', '{', ip) - 1;			break;
 			default: continue;
 		}
 	}
