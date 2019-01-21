@@ -24,7 +24,9 @@ int load_file(char *buffer, long length, char *path){
 	if(!f)
 		return 0;
 	fseek(f, 0, SEEK_SET);
-	fread(buffer, 1, length, f);
+	if(!fread(buffer, 1, length, f)){
+		exit(1);
+	}
 	fclose(f);
 	return 1;
 }
