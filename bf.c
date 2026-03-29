@@ -35,11 +35,11 @@ void usage(char* prog){
 	printf("usage: %s [path to *.bf]\n", prog);
 }
 
-int loop(char *bf, long length, char inc, char dec, int index){
+int loop(char *bf, long length, char inc, char dec, int dir, int index){
 	int ip, inner_loop;
 
 	inner_loop = 0;
-	for(ip = index + 1; ip < length; ip++){
+	for(ip = index + dir; ip >= 0 && ip < length; ip += dir){
 		if(bf[ip] == dec && !inner_loop) 	break;
 		if(bf[ip] == inc) 			inner_loop++;
 		if(bf[ip] == dec) 			inner_loop--;
@@ -63,10 +63,10 @@ void interpret(char *bf, long length){
 			case '<': ptr = (ptr - 1 + MEM_LENGTH) % MEM_LENGTH; break;
 			case ',': memory[ptr] = getchar(); 	break;
 			case '.': putchar(memory[ptr]); 	break;
-			case '[': if(!memory[ptr]) ip = loop(bf, length, '[', ']', ip) - 1;	break;
-			case ']': if(memory[ptr])  ip = loop(bf, length, ']', '[', ip) - 1;	break;
-			case '{': ip = loop(bf, length, '{', '}', ip) - 1;			break;
-			case '}': ip = loop(bf, length, '}', '{', ip) - 1;			break;
+			case '[': if(!memory[ptr]) ip = loop(bf, length, '[', ']',  1, ip) - 1;	break;
+			case ']': if(memory[ptr])  ip = loop(bf, length, '[', ']', -1, ip) - 1;	break;
+			case '{': ip = loop(bf, length, '{', '}',  1, ip) - 1;			break;
+			case '}': ip = loop(bf, length, '{', '}', -1, ip) - 1;			break;
 			default: continue;
 		}
 	}
