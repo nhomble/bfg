@@ -59,8 +59,8 @@ void interpret(char *bf, long length){
 		switch(input){
 			case '+': memory[ptr]++; 		break;
 			case '-': memory[ptr]--; 		break;
-			case '>': ptr++; 			break;
-			case '<': ptr--; 			break;
+			case '>': ptr = (ptr + 1) % MEM_LENGTH; 	break;
+			case '<': ptr = (ptr - 1 + MEM_LENGTH) % MEM_LENGTH; break;
 			case ',': memory[ptr] = getchar(); 	break;
 			case '.': putchar(memory[ptr]); 	break;
 			case '[': if(!memory[ptr]) ip = loop(bf, length, '[', ']', ip) - 1;	break;
