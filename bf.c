@@ -38,8 +38,9 @@ void usage(char* prog){
 	printf("usage: %s [path to *.bf]\n", prog);
 }
 
-int loop(char *bf, long length, char inc, char dec, int dir, int index){
-	int ip, inner_loop;
+long loop(char *bf, long length, char inc, char dec, int dir, long index){
+	long ip;
+	int inner_loop;
 
 	inner_loop = 0;
 	for(ip = index + dir; ip >= 0 && ip < length; ip += dir){
@@ -52,7 +53,7 @@ int loop(char *bf, long length, char inc, char dec, int dir, int index){
 
 void interpret(char *bf, long length){
 	unsigned char memory[MEM_LENGTH] = {0};
-	int ip;
+	long ip;
 	unsigned int ptr;
 	char input;
 
