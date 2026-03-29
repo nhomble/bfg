@@ -4,31 +4,34 @@
 // close enough to INF for a bf program
 #define MEM_LENGTH 	(2 << 8)
 
-long file_size(char *path){
+char *load_file(char *path, long *out_length){
 	FILE *f;
 	long length;
+	char *buffer;
 
-	f = fopen (path, "rb");
-	length = 0;
-	if(f){
-		fseek(f, 0, SEEK_END);
-		length = ftell(f);
-		fclose(f);
-	}
-	return length;
-}
-
-int load_file(char *buffer, long length, char *path){
-	FILE *f;
 	f = fopen(path, "rb");
 	if(!f)
-		return 0;
+		return NULL;
+	fseek(f, 0, SEEK_END);
+	length = ftell(f);
+	if(length <= 0){
+		fclose(f);
+		return NULL;
+	}
+	buffer = malloc(sizeof(char) * length);
+	if(!buffer){
+		fclose(f);
+		return NULL;
+	}
 	fseek(f, 0, SEEK_SET);
 	if(!fread(buffer, 1, length, f)){
-		exit(1);
+		free(buffer);
+		fclose(f);
+		return NULL;
 	}
 	fclose(f);
-	return 1;
+	*out_length = length;
+	return buffer;
 }
 
 void usage(char* prog){
@@ -82,13 +85,9 @@ int main(int argc, char** argv){
 	}
 
 	path = argv[1];
-	length = file_size(path);
-	if(!length)
+	buffer = load_file(path, &length);
+	if(!buffer)
 		return -1;
-
-	buffer = malloc(sizeof(char) * length);
-	if(!load_file(buffer, length, path))
-		return -1;	
 	
 	interpret(buffer, length);
 	free(buffer);
